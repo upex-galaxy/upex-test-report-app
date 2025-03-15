@@ -5,13 +5,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { scanAllureReports } from "@/lib/allure-scanner"
+import type { Metadata } from "next"
 
+// Definir los parámetros como Promises
+type ReportParams = Promise<{
+  environment: string
+  strategy: string
+}>
+
+// Recibir los props completos y esperar la resolución de la Promise
 export default async function ReportsListPage({
   params,
 }: {
-  params: { environment: string; strategy: string }
+  params: ReportParams
 }) {
-  const { environment, strategy } = params
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { environment, strategy } = await params
   const reports = await scanAllureReports()
 
   // Verificar si el environment y strategy existen
@@ -82,8 +91,8 @@ export default async function ReportsListPage({
                       variant={execution.status === "passed" ? "default" : "destructive"}
                       className={
                         execution.status === "passed"
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-red-600 hover:bg-red-700"
+                          ? "bg-green-600 hover:bg-green-700 uppercase text-white"
+                          : "bg-red-600 hover:bg-red-700 uppercase text-white"
                       }
                     >
                       {execution.status}
@@ -102,5 +111,19 @@ export default async function ReportsListPage({
       )}
     </div>
   )
+}
+
+// Actualizar también la función generateMetadata
+export async function generateMetadata({
+  params,
+}: {
+  params: ReportParams
+}): Promise<Metadata> {
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { environment, strategy } = await params
+
+  return {
+    title: `${environment.charAt(0).toUpperCase() + environment.slice(1)} ${strategy.charAt(0).toUpperCase() + strategy.slice(1)} Reports - UPEX Test Report Portal`,
+  }
 }
 

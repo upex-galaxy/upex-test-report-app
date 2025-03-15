@@ -1,23 +1,36 @@
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 
-interface Props {
-  params: { environment: string; strategy: string }
+// Definir los parámetros como Promises
+type EnvironmentParams = Promise<{
+  environment: string
+  strategy: string
+}>
+
+// Recibir los props completos y esperar la resolución de la Promise
+export default async function EnvironmentStrategyPage({
+  params,
+}: {
+  params: EnvironmentParams
+}) {
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { environment, strategy } = await params
+
+  // Redirigir a la nueva ruta
+  redirect(`/reports-list/${environment}/${strategy}`)
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { environment, strategy } = params
+// Actualizar también la función generateMetadata
+export async function generateMetadata({
+  params,
+}: {
+  params: EnvironmentParams
+}): Promise<Metadata> {
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { environment, strategy } = await params
 
   return {
     title: `${environment.charAt(0).toUpperCase() + environment.slice(1)} ${strategy.charAt(0).toUpperCase() + strategy.slice(1)} Reports - UPEX Test Report Portal`,
   }
-}
-
-// Esta página redirige a la nueva ruta para mantener la compatibilidad con enlaces existentes
-export default function EnvironmentStrategyPage({ params }: Props) {
-  const { environment, strategy } = params
-
-  // Redirigir a la nueva ruta
-  redirect(`/reports-list/${environment}/${strategy}`)
 }
 

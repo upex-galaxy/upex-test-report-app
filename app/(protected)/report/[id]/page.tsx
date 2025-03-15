@@ -1,6 +1,12 @@
 import { notFound } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import type { Metadata } from "next"
+
+// Definir los parámetros como Promises
+type ReportIdParams = Promise<{
+  id: string
+}>
 
 // Mock data - in a real app, this would come from an API or database
 const reports = {
@@ -44,8 +50,15 @@ const reports = {
   },
 }
 
-export default function ReportDetailPage({ params }: { params: { id: string } }) {
-  const report = reports[params.id as keyof typeof reports]
+// Recibir los props completos y esperar la resolución de la Promise
+export default async function ReportDetailPage({
+  params,
+}: {
+  params: ReportIdParams
+}) {
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { id } = await params
+  const report = reports[id as keyof typeof reports]
 
   if (!report) {
     notFound()
@@ -73,7 +86,9 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
                   <Badge
                     variant={report.status === "passed" ? "default" : "destructive"}
                     className={
-                      report.status === "passed" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+                      report.status === "passed"
+                        ? "bg-green-600 hover:bg-green-700 uppercase text-white"
+                        : "bg-red-600 hover:bg-red-700 uppercase text-white"
                     }
                   >
                     {report.status}
@@ -173,7 +188,9 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
                 <Badge
                   variant={test.status === "passed" ? "default" : "destructive"}
                   className={
-                    test.status === "passed" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+                    test.status === "passed"
+                      ? "bg-green-600 hover:bg-green-700 uppercase text-white"
+                      : "bg-red-600 hover:bg-red-700 uppercase text-white"
                   }
                 >
                   {test.status}
@@ -185,5 +202,26 @@ export default function ReportDetailPage({ params }: { params: { id: string } })
       </Card>
     </div>
   )
+}
+
+// Actualizar también la función generateMetadata
+export async function generateMetadata({
+  params,
+}: {
+  params: ReportIdParams
+}): Promise<Metadata> {
+  // Esperar la resolución de la Promise antes de acceder a los parámetros
+  const { id } = await params
+  const report = reports[id as keyof typeof reports]
+
+  if (!report) {
+    return {
+      title: "Report Not Found - UPEX Test Report Portal",
+    }
+  }
+
+  return {
+    title: `${report.name} - UPEX Test Report Portal`,
+  }
 }
 
