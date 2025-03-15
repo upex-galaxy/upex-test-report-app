@@ -48,10 +48,23 @@ export default async function AllureReportPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-2">Follow this structure for your Allure reports:</p>
-              <pre className="bg-[#1A1A2E] p-3 rounded-md text-sm overflow-x-auto">
-                public/allure-report/ ├── {"{environment}"}/ │ ├── {"{strategy}"}/ │ │ ├── {"{build-number}"}/ │ │ │ ├──
-                data/ │ │ │ ├── index.html │ │ │ └── ...
-              </pre>
+              <div className="bg-[#1A1A2E] p-3 rounded-md border border-[#2A2A4E] relative">
+                <div className="flex items-center text-xs text-gray-400 mb-2 pb-1 border-b border-[#2A2A4E]">
+                  <FileText className="h-3.5 w-3.5 mr-1.5" />
+                  <span>Directory Structure</span>
+                </div>
+                <pre className="text-sm overflow-x-auto font-mono">
+                  <code>
+                    <span className="text-gray-500">public/allure-report/</span>
+                    <br /><span className="text-blue-400">├── [environment]/</span>
+                    <br /><span className="text-blue-400">│   ├── [strategy]/</span>
+                    <br /><span className="text-blue-400">│   │   ├── [build-number]/</span>
+                    <br /><span className="text-green-400">│   │   │   ├── data/</span>
+                    <br /><span className="text-yellow-400">│   │   │   ├── index.html</span>
+                    <br /><span className="text-gray-500">│   │   │   └── ...</span>
+                  </code>
+                </pre>
+              </div>
             </CardContent>
           </Card>
         </div>
